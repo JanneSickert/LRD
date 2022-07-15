@@ -5,12 +5,9 @@ class LinearRegressionData:
         self.feature = {"name": dataObj["feature"]}    # T3
         self.target = {"name": dataObj["target"]}     # T4
         df = pd.read_csv(path)
-        print(df)
         df = df.head(df.size)
         self.feature["data"] = df[dataObj["feature"]].tolist()
         self.target["data"] = df[dataObj["target"]].tolist()
-        print(self.feature)
-        print(self.target)
 
     def __init__(self, *args):
         self.feature = None
