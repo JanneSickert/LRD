@@ -3,7 +3,7 @@ from Konstanten import Konstanten
 
 CONST = Konstanten()
 
-def ersteFormel():
+def ersteFormel(data):
     m = len(data.feature["data"])
     a = 1 / (2 * m)
     s = []
@@ -18,4 +18,4 @@ def foo(p):
 
 if __name__ == '__main__':
     data = LinearRegressionData({"feature" : "T3", "target" : "T4"}, CONST.get_path_to_csv())
-    print(ersteFormel())
+    print(ersteFormel(data))
