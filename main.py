@@ -6,11 +6,14 @@ import math
 CONST = Konstanten()
 length = None
 
-def test_function(a, x, d):
-    return (np.add(np.multiply(x, a), d))
+def test_function(a, fd, d):
+    return (np.add(np.multiply(a, fd), d))
 
+def test_function(a, x, d):
+    return (a * x + d)
+    
 def calculate_distance(a, d, data):
-    return (np.sum(np.sqrt(np.power(np.subtract(test_function(a, data.feature["data"], d), data.target["data"])), 2)))
+        return np.sum(np.sqrt(np.power(np.subtract(test_function(a, data.feature["data"], d), data.target["data"]), 2)))
 
 def calculate_mittelwert(data):
     summe = np.sum(data.target["data"])
