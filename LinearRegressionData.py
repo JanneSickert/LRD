@@ -6,8 +6,8 @@ class LinearRegressionData:
         self.target = {"name": dataObj["target"]}     # T4
         df = pd.read_csv(path)
         df = df.head(df.size)
-        self.feature["data"] = df[dataObj["feature"]].tolist()
-        self.target["data"] = df[dataObj["target"]].tolist()
+        self.feature["data"] = df[dataObj["feature"]]
+        self.target["data"] = df[dataObj["target"]]
 
     def __init__(self, *args):
         self.feature = None

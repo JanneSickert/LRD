@@ -1,34 +1,24 @@
 from LinearRegressionData import LinearRegressionData
 from Konstanten import Konstanten
+import numpy as np
 import math
 
 CONST = Konstanten()
 length = None
 
 def test_function(a, x, d):
-    result = a * x + d
-    return result
+    return (np.add(np.multiply(x, a), d))
 
 def calculate_distance(a, d, data):
-    distance_to_function = 0
-    for i in range(0, length):
-        y_from_test_function = test_function(a, data.feature["data"][i], d)
-        y_from_measured_data = data.target["data"][i]
-        diffrence_between_real_and_test = math.sqrt((y_from_test_function - y_from_measured_data) ** 2)
-        distance_to_function = distance_to_function + diffrence_between_real_and_test
-    return distance_to_function
+    return np.sum(np.sqrt(np.power(np.subtract(test_function(a, data.feature["data"], d), data.target["data"]))))
 
 def calculate_mittelwert(data):
-    summe = sum(data.target["data"])
+    summe = np.sum(data.target["data"])
     average = summe / length
     return average
 
 def calculate_average_increase(data):
-    s = 0
-    for i in range(0, length):
-        subtotals = data.target["data"][i] / data.feature["data"][i]
-        s = s + subtotals
-    s = s / length
+    s = (np.sum(np.divide(data.target["data"], data.feature["data"]))) / length
     return s
 
 def create_formula(step_a, step_d, mittelwert, min_value):
@@ -45,7 +35,7 @@ def create_formula(step_a, step_d, mittelwert, min_value):
 if __name__ == '__main__':
     print("start LRD")
     data = LinearRegressionData({"feature" : "T3", "target" : "T4"}, CONST.get_path_to_csv())
-    length = len(data.target["data"])
+    length = data.target["data"].size
     mittelwert = calculate_mittelwert(data)
     min_value = {"index": 0, "value": math.inf, "plus_or_minus": None}  # min_value object
     min_value["value"] = calculate_distance(1, mittelwert, data)    # y = x + d
