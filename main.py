@@ -10,7 +10,7 @@ def test_function(a, x, d):
     return (np.add(np.multiply(x, a), d))
 
 def calculate_distance(a, d, data):
-    return np.sum(np.sqrt(np.power(np.subtract(test_function(a, data.feature["data"], d), data.target["data"]))))
+    return np.sum(np.sqrt(np.power(np.subtract(test_function(a, data.feature["data"], d), data.target["data"]), 2)))
 
 def calculate_mittelwert(data):
     summe = np.sum(data.target["data"])
