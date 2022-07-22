@@ -22,7 +22,8 @@ matrix_list = [
     [], # difference        7
     [], # positiv target    8
     [], # x for plot        9
-    []  # y for plot        10
+    [], # y for plot        10
+    []  # Kurzeitspeicher   11
 ]
 
 class UserInterface:
