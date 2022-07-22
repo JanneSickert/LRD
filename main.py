@@ -1,3 +1,7 @@
+from ast import Is
+from decimal import ROUND_DOWN
+from msilib.schema import PublishComponent
+from re import A
 from LinearRegressionData import LinearRegressionData
 from Konstanten import Konstanten
 import numpy as np
@@ -5,79 +9,131 @@ import math
 import matplotlib.pyplot as plt
 
 CONST = Konstanten()
-length = None
+length = 0
 
-def test_function(a, x, d):
-    return (np.add(np.multiply(x, a), d))
+matrix_list = [
+    [], # index             0
+    [], # feature           1
+    [], # target            2
+    [], # a                 3
+    [], # d                 4
+    [], # sum diffrence     5
+    [], # my finding        6
+    [], # difference        7
+    [], # positiv target    8
+    [], # x for plot        9
+    []  # y for plot        10
+]
 
-def calculate_distance(a, d, data):
-    return np.sum(np.sqrt(np.power(np.subtract(test_function(a, data.feature["data"], d), data.target["data"]), 2)))
+class UserInterface:
+    def __init__(self, a = 1, d = 0):
+        self.a = a
+        self.d = d
 
-def calculate_mittelwert(data):
-    summe = np.sum(data.target["data"])
-    average = summe / length
-    return average
+    @classmethod
+    def show_graph():
+        plt.figure()
+        plt.plot(matrix[9], matrix[10])
+        plt.scatter(matrix[1], matrix[2])
+        plt.show()
 
-def calculate_average_increase(data):
-    s = (np.sum(np.divide(data.target["data"], data.feature["data"]))) / length
-    return s
+    @classmethod
+    def print_function(self):
+        print("f(x) = " + str(self.a) + " * x " + str(self.d))
 
-def create_formula(a, d, min_value):
-    if d < 0:
-        d = " - " + str(d)
-    elif d > 0:
-        d = " + " + str(d)
-    else:
-        d = ""
-    formular_string = "f(x) = " + min_value["plus_or_minus"] + " " + str(a) + " * x " + str(d)
-    return formular_string
+matrix = np.array
 
-def show_graph(a, d, data):
-    plt.figure()
-    plt.plot(data.feature["data"], test_function(a, data.feature["data"], d))
-    plt.scatter(data.feature["data"], data.target["data"])
-    plt.show()
+class MathFunction(UserInterface):
+    def __init__(self, a = 1, d = 0):
+        super().__init__(a, d)
+        self.print_func = lambda x: super()._print_function()
+    
+    def set_d(self, d):
+        self.d = d
+    
+    def set_a(self, a):
+        self.a = a
 
-if __name__ == '__main__':
-    print("start LRD")
+    def calculate_graph(self, x : np.array):
+        matrix[10] = np.add(np.multiply(self.a, x), self.d)
+        matrix[9]  = np.copy(x)
+
+math_function = MathFunction()
+
+def show_all():
+    UserInterface.print_function()
+    UserInterface.show_graph()
+
+def init_list():
     data = LinearRegressionData({"feature" : "T3", "target" : "T4"}, CONST.get_path_to_csv())
     length = data.target["data"].size
-    mittelwert = calculate_mittelwert(data)
-    min_value = {"index": 0, "value": math.inf, "plus_or_minus": None}  # min_value object
-    min_value["value"] = calculate_distance(1, mittelwert, data)    # y = x + d
-    average_increase = calculate_average_increase(data)
-    max_target = max(data.target["data"])
-    step_d = max_target / average_increase / CONST.get_accuracy()
-    step_a = average_increase / max_target
-    max_increased = average_increase / CONST.get_accuracy()
-    b = True
-    step = 0
-    while b:    # function rise
-        a, d = step_a * step, mittelwert - (step * step_d)
-        diffrent = calculate_distance(a, d, data)
-        if diffrent < min_value["value"]:
-            min_value["value"] = diffrent
-            min_value["index"] = step
-            min_value["plus_or_minus"] = "+"
-        if step == 1000:
-            b = False
+    i = 0
+    while i < length:
+        matrix_list[0].append(int(i))
+        i = i + 1
+    matrix_list[1] = data.feature["data"]
+    matrix_list[2] = data.target["data"]
+    i = 3
+    matrix[4] = data.target["data"]
+    while i < 11:
+        matrix_list[i].append(0)
+        i = i + 1
+        if i == 4:
+            continue
+    matrix = np.array(matrix_list)
+    i = 0
+    while i < matrix.size:
+        np.array(matrix[i])
+        i = i + 1
+
+def init_a():
+    i = 1
+    half = int(length * 0.5)
+    while i < half:
+        matrix[3][i] = math.pow(matrix[3][i - 1], 2) * (-1)
+        i = i + 1
+    while i < length:
+        matrix[3][i] = math.pow(matrix[3][i - 1], 2)
+        i = i + 1
+    while i < length:
+        matrix[3][i] = math.pow(0.0001)
+        i = i + 1
+
+def init_d():
+    pass
+
+def make_row_plus(ind):
+    return np.sqrt(np.power(matrix[ind], 2))
+
+def init_differences(i):
+    matrix[6] = np.add(np.multiply(matrix[3][i], matrix[1]), matrix[4][i])
+    matrix[6] = make_row_plus(6)
+    matrix[8] = make_row_plus(2)
+    matrix[7] = np.subtract(matrix[6], matrix[8])
+    matrix[7] = make_row_plus(7)
+
+def get_key_by_value(value, index_search, index_result = 0):
+    for i, v in np.arange(matrix[0]), np.arange(matrix[index_search]):
+        if value == v:
+            return float(matrix[index_result][i])
         else:
-            step = step + 1
-    b = True
-    step = 0
-    while b:    # function fall
-        a, d = step_a * step, mittelwert - (step * step_d)
-        diffrent = calculate_distance(a, d, data)
-        if diffrent < min_value["value"]:
-            min_value["value"] = diffrent
-            min_value["index"] = step
-            min_value["plus_or_minus"] = "-"
-        if step == -1000:
-            b = False
-        else:
-            step = step - 1
-    a, d = step_a * min_value["index"], mittelwert - (min_value["index"] * step_d)
-    formula = create_formula(a, d, min_value)
-    show_graph(a, d, data)
-    print(formula)
-    print("end LRD")
+            return -1
+
+def init_all_diffs():
+    for i in range(0, length, 1):
+        init_differences(i)
+        matrix[5][i] = sum(matrix[7])
+    ind_copy = np.array(matrix[0], dtype='int')
+    max_diff = np.array(matrix[5], dtype=float)
+    ld = get_key_by_value(max_diff, 5, index_result = 2)
+    math_function.set_d(ld)
+
+if __name__ == "__main__":
+    execute = [init_list, init_a, init_d, init_all_diffs, show_all]
+    for foo in execute:
+        print(str(foo))
+        try:
+            foo()
+        except NameError:
+            print("error in: " + str(foo))
+            print(str(NameError))
