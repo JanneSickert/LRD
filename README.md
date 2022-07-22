@@ -38,8 +38,8 @@
   <td>f(x) = a * x + b</td>
   <td>d = ∑ ( f(x) - g(x) )</td>
   <td> | g(x) | </td>
-  <td>x</td>
-  <td>y</td>
+  <td>x graph</td>
+  <td>y graph</td>
   <td>Kurzeitspeicher</td>
  </tr>
 </table>
@@ -49,4 +49,4 @@
 <br>
 <p style="margin-left: 20px; font-size: 16pt;">Zuerst wird der richtige y-Achsen-Abschnitt gesucht.</p>
 
-<br><img src="pic.jpg" alt="Bild existiert nicht mehr" width="640" height="480" style="margin-left: 20px;"> 
+<br><img src="pic.png" alt="Bild existiert nicht mehr" width="640" height="480" style="margin-left: 20px;"> 
