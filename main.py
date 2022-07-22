@@ -2,6 +2,7 @@ from LinearRegressionData import LinearRegressionData
 from Konstanten import Konstanten
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 CONST = Konstanten()
 length = None
@@ -21,8 +22,7 @@ def calculate_average_increase(data):
     s = (np.sum(np.divide(data.target["data"], data.feature["data"]))) / length
     return s
 
-def create_formula(step_a, step_d, mittelwert, min_value):
-    a, d = step_a * min_value["index"], mittelwert - (min_value["index"] * step_d)
+def create_formula(a, d, min_value):
     if d < 0:
         d = " - " + str(d)
     elif d > 0:
@@ -31,6 +31,12 @@ def create_formula(step_a, step_d, mittelwert, min_value):
         d = ""
     formular_string = "f(x) = " + min_value["plus_or_minus"] + " " + str(a) + " * x " + str(d)
     return formular_string
+
+def show_graph(a, d, data):
+    plt.figure()
+    plt.plot(data.feature["data"], test_function(a, data.feature["data"], d))
+    plt.scatter(data.feature["data"], data.target["data"])
+    plt.show()
 
 if __name__ == '__main__':
     print("start LRD")
@@ -70,6 +76,8 @@ if __name__ == '__main__':
             b = False
         else:
             step = step - 1
-    formula = create_formula(step_a, step_d, mittelwert, min_value)
+    a, d = step_a * min_value["index"], mittelwert - (min_value["index"] * step_d)
+    formula = create_formula(a, d, min_value)
+    show_graph(a, d, data)
     print(formula)
     print("end LRD")
