@@ -48,10 +48,10 @@ if __name__ == '__main__':
     average_increase = calculate_average_increase(data)
     max_target = max(data.target["data"])
     step_d = max_target / average_increase / CONST.get_accuracy()
-    step_a = step_d / max_target
+    step_a = average_increase / max_target
     max_increased = average_increase / CONST.get_accuracy()
     b = True
-    step = 1
+    step = 0
     while b:    # function rise
         a, d = step_a * step, mittelwert - (step * step_d)
         diffrent = calculate_distance(a, d, data)
@@ -59,12 +59,12 @@ if __name__ == '__main__':
             min_value["value"] = diffrent
             min_value["index"] = step
             min_value["plus_or_minus"] = "+"
-        if test_function(a, max(data.feature["data"]), d) > (max_target * 2):
+        if step == 1000:
             b = False
         else:
             step = step + 1
     b = True
-    step = -1
+    step = 0
     while b:    # function fall
         a, d = step_a * step, mittelwert - (step * step_d)
         diffrent = calculate_distance(a, d, data)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
             min_value["value"] = diffrent
             min_value["index"] = step
             min_value["plus_or_minus"] = "-"
-        if test_function(a, min(data.feature["data"]), d) < (min(data.target["data"]) * 2):
+        if step == -1000:
             b = False
         else:
             step = step - 1
