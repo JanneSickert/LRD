@@ -35,11 +35,10 @@ def show_graph(data, **vars):
     for e in data.feature["data"]:
         x.append(float(e))
         y.append(float(make_my_values(vars["a"], vars["y_achsenabschnitt"], e)))
-    for i in range(len(x)):
-        print("x:", x[i], "y:", y[i])
     plt.plot(x, y)
     plt.scatter(data.feature["data"], data.target["data"])
     plt.show()
+    return x, y
 
 def y_achse_berechnen():
     sort = np.sort(a_target)
@@ -77,36 +76,38 @@ def rotated_over_function_line(data, ka, kd, steps_a, steps_d):
             min_value["y_achsenabschnitt"] = d
         k = k + 1
 
-def rotate_over_x_is_null(steps_a, steps_d):
+def rotate_over_x_is_null(steps_a, steps_d, zbf):
     ka, kd = 0, 0
-    zbf = length ** 2
-    print("zu berechnende functionen: ", zbf)
     while kd < length:
         while ka < length:
             rotated_over_function_line(data, ka, kd, steps_a, steps_d)
             ka = ka + 1
             zbf = zbf - 1
-            if ka % 10 == 0:
-                print(create_formula(
-                    a = min_value["a"], 
-                    y_achsenabschnitt = min_value["y_achsenabschnitt"])
-                )
-                print("zu berechnende functionen: ", zbf)
+            print("zu berechnende functionen: ", zbf)
         ka = 0
         kd = kd + 1
 
-if __name__ == '__main__':
+def print_lists(*lists):
     print("start LRD")
+    for l in lists:
+        print(str(dir(l)))
+        print(str(l))
+        print("\n")
+        print("\n")
+    print("ende LRD")
+
+if __name__ == '__main__':
     data = LinearRegressionData({"feature" : "T3", "target" : "T4"}, CONST.get_path_to_csv())
     length = data.target["data"].size
     a_feature = np.array(data.feature["data"])
     a_target =  np.array(data.target["data"])
     steps_a, steps_d = winkel_berechnen(), y_achse_berechnen()
-    print(steps_a, steps_d)
-    rotate_over_x_is_null(steps_a, steps_d)
+    print_lists(a_feature, a_target, steps_a, steps_d)
+    rotate_over_x_is_null(steps_a, steps_d, (length ** 2) * 2)
     steps_d = np.multiply(steps_d, (-1))
-    rotate_over_x_is_null(steps_a, steps_d)
-    print(str(min_value))
-    show_graph(data, a = min_value["a"], y_achsenabschnitt = min_value["y_achsenabschnitt"])
+    print_lists(steps_d, min_value)
+    rotate_over_x_is_null(steps_a, steps_d, (length ** 2))
     create_formula(a = min_value["index"], y_achsenabschnitt = min_value["y_achsenabschnitt"])
-    print("ende")
+    x , y = show_graph(data, a = min_value["a"], y_achsenabschnitt = min_value["y_achsenabschnitt"])
+    for i in range(len(x)):
+        print("x:", x[i], "y:", y[i])
