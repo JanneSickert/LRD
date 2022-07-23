@@ -20,4 +20,4 @@ die den kleinsten Abstand zu den Punkten hat.
     </tr>
 </table>
 <br><br>
-<img src="graph.png" alt="Bild existiert nicht mehr" width="100%" height="100%"></img>
+<img src="graph.PNG" alt="Bild existiert nicht mehr" width="100%" height="100%"></img>
