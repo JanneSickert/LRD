@@ -25,20 +25,24 @@ def calculate_average_increase(data):
     s = (np.sum(np.divide(data.target["data"], data.feature["data"]))) / length
     return s
 
-def create_formula(a, d):
-    formular_string = "f(x) = " + str(a) + " * x " + str(d)
+def create_formula(**vars):
+    formular_string = "f(x) = " + str(vars["a"]) + " * x + " + str(vars["y_achsenabschnitt"])
     return formular_string
 
 def make_my_values(a, d, x):
     return (a*x+d)
 
-def show_graph(data, a, x, d):
+def show_graph(data, **vars):
     plt.figure()
-    plt.title(create_formula(a, d))
+    plt.title(create_formula(a = vars["a"], y_achsenabschnitt = vars["y_achsenabschnitt"]))
     x, y = [], []
+    x.append(0)
+    y.append(vars["y_achsenabschnitt"])
     for e in data.feature["data"]:
         x.append(float(e))
-        y.append(float(make_my_values(a, d, e)))
+        y.append(float(make_my_values(vars["a"], vars["y_achsenabschnitt"], e)))
+    for i in range(len(x)):
+        print("x:", x[i], "y:", y[i])
     plt.plot(x, y)
     plt.scatter(data.feature["data"], data.target["data"])
     plt.show()
@@ -120,14 +124,13 @@ if __name__ == '__main__':
         k = k + 1
         if k % 10 == 0:
             vorzeichen = vorzeichen * (-1)
-    formula = create_formula(steps_a[min_value_a["index"]], d)
     ppd = mittelwert - (min_value["index"] * step_d)
     px = data.feature["data"][min_value["index"]]
     pd = mittelwert - (min_value["index"] * step_d)
     search = []
     ka = 0
     for e in data.target["data"]:
-         o = {"index": ka, "y-achsenabschnitt": e, "a": steps_a[min_value_a["index"]], "d": pd, "y-achsenabschnitt": e, "value": 0}
+         o = {"index": ka, "y-achsenabschnitt": e, "a": steps_a[min_value_a["index"]], "d": pd, "y_achsenabschnitt": e, "value": 0}
          o["value"] = calculate_distance(o["a"], o["d"], data)
          search.append(o)
          ka = ka + 1
@@ -136,6 +139,7 @@ if __name__ == '__main__':
         if e["value"] < minimum:
             minimum = e["value"]
             search_index = e["index"]
+    formula = create_formula(a = steps_a[min_value_a["index"]], y_achsenabschnitt = search[search_index]["y_achsenabschnitt"])
+    show_graph(data, a = steps_a[min_value["index"]], y_achsenabschnitt = search[search_index]["y_achsenabschnitt"])
     print(formula)
-    show_graph(data, steps_a[min_value["index"]], px, search[search_index]["y-achsenabschnitt"])
     print("end LRD")
