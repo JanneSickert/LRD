@@ -47,22 +47,6 @@ def show_graph(data, **vars):
     plt.scatter(data.feature["data"], data.target["data"])
     plt.show()
 
-def winkel_berechnen(average_increase, data, max_feature):
-    # --------------------------------------
-    # Hypotenuse: a² + b² = C²
-    # cos(α) = (Ankathete / Hypotenuse)
-    # -------------------------------------
-        i = 0
-        cos = []
-        while i < data.target["data"].size:
-            a2, b2 = data.target["data"][i] ** 2, data.feature["data"][i] ** 2
-            c2 = a2 + b2
-            c = c2 ** (0.5)
-            a = max_feature / c
-            cos.append(a)
-            i = i + 1
-        return cos
-
 class MyRange:
     def __init__(self, p_from : int, p_to : int, p_step : int):
         self.p_from = p_from
@@ -85,61 +69,68 @@ class MyRange:
 def hat_diffrent_weniger_abstand(diffrent, value):
     return (betrag(diffrent) < betrag(value))
 
+def y_achse_berechnen(target):
+    target = np.array(target)
+    sort = np.sort(target)
+    return sort
+
+def winkel_berechnen(data, max_feature):
+    # --------------------------------------
+    # Hypotenuse: a² + b² = C²
+    # cos(α) = (Ankathete / Hypotenuse)
+    # -------------------------------------
+    i = 0
+    cos = []
+    while i < length:
+        a2, b2 = data.target["data"][i] ** 2, data.feature["data"][i] ** 2
+        c2 = a2 + b2
+        c = c2 ** (0.5)
+        a = max_feature / c
+        cos.append(a)
+        i = i + 1
+    return cos
+
+min_value = {"index": 0, "value": math.inf, "a": 0.0, "d": 0, "y_achsenabschnitt": 0}
+
+def rotate(data, ka, kd, steps_a, steps_d):
+    k = 0
+    while k < length:
+        a = steps_a[ka]
+        d = steps_d[kd]
+        diffrent = calculate_distance(a, d, data)
+        if hat_diffrent_weniger_abstand(diffrent, min_value["value"]):
+            min_value["value"] = diffrent
+            min_value["index"] = k
+            min_value["a"] = a
+            min_value["d"] = d
+            min_value["y_achsenabschnitt"] = d
+        k = k + 1
+
 if __name__ == '__main__':
     print("start LRD")
     data = LinearRegressionData({"feature" : "T3", "target" : "T4"}, CONST.get_path_to_csv())
     length = data.target["data"].size
     mittelwert = calculate_mittelwert(data)
-    min_value = {"index": 0, "value": math.inf, "plus_or_minus": None}  # min_value object
-    min_value_a = {"index": 0, "value": math.inf, "plus_or_minus": None}
     min_value["value"] = calculate_distance(1, mittelwert, data)    # y = x + d
     average_increase = calculate_average_increase(data)
     max_target, max_feature = max(data.target["data"]), max(data.feature["data"])
-    step_d = max_target / average_increase
-    steps_a = winkel_berechnen(average_increase, data, max_feature)
+    steps_d = y_achse_berechnen(data.target["data"])
+    steps_a = winkel_berechnen(data, max_feature)
     max_increased = average_increase
     r = MyRange(-(length / 2), (length / 2), 1)
     z = r.get_data()
-    k = 0
-    vorzeichen = 1
-    while k < length:
-        a = steps_a[k]
-        diffrent = calculate_distance(a, mittelwert, data)
-        if hat_diffrent_weniger_abstand(diffrent, min_value["value"]):
-            min_value_a["value"] = diffrent
-            min_value_a["index"] = k
-            min_value_a["plus_or_minus"] = "+"
-        k = k + 1
-        if k % 10 == 0:
-            vorzeichen = vorzeichen * (-1)
-    k = 0
-    vorzeichen = 1
-    while k < length:
-        d = mittelwert - (((k - length) / 2) * step_d)
-        diffrent = calculate_distance(steps_a[min_value_a["index"]], d, data)
-        if hat_diffrent_weniger_abstand(diffrent, min_value["value"]):
-            min_value["value"] = diffrent
-            min_value["index"] = k
-            min_value["plus_or_minus"] = "+"
-        k = k + 1
-        if k % 10 == 0:
-            vorzeichen = vorzeichen * (-1)
-    ppd = mittelwert - (min_value["index"] * step_d)
-    px = data.feature["data"][min_value["index"]]
-    pd = mittelwert - (min_value["index"] * step_d)
-    search = []
-    ka = 0
-    for e in data.target["data"]:
-         o = {"index": ka, "y-achsenabschnitt": e, "a": steps_a[min_value_a["index"]], "d": pd, "y_achsenabschnitt": e, "value": 0}
-         o["value"] = calculate_distance(o["a"], o["d"], data)
-         search.append(o)
-         ka = ka + 1
-    minimum, search_index = 640000, 0
-    for e in search:
-        if e["value"] < minimum:
-            minimum = e["value"]
-            search_index = e["index"]
-    formula = create_formula(a = steps_a[min_value_a["index"]], y_achsenabschnitt = search[search_index]["y_achsenabschnitt"])
-    show_graph(data, a = steps_a[min_value["index"]], y_achsenabschnitt = search[search_index]["y_achsenabschnitt"])
-    print(formula)
-    print("end LRD")
+    ka, kd = 0, 0
+    zbf = length ** 2
+    print("zu berechnende functionen: ", zbf)
+    while kd < length:
+        while ka < length:
+            rotate(data, ka, kd, steps_a, steps_d)
+            ka = ka + 1
+            zbf = zbf - 1
+            print("zu berechnende functionen: ", zbf)
+            if ka % 10 == 0:
+                print(create_formula(a = min_value["a"], y_achsenabschnitt = min_value["y_achsenabschnitt"]))
+        ka = 0
+        kd = kd + 1
+    print(str(min_value))
+    show_graph(data, a = min_value["a"], y_achsenabschnitt = min_value["y_achsenabschnitt"])
