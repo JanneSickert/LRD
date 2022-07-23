@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 CONST = Konstanten()
 length = None
 
+def betrag(nr):
+    return (math.sqrt(math.pow(nr, 2)))
+
 def test_function(a, x, d):
     return (np.add(np.multiply(x, a), d))
 
@@ -29,11 +32,14 @@ def create_formula(a, d):
 def make_my_values(a, d, x):
     return (a*x+d)
 
-def show_graph(data, min_value, a, x, d):
+def show_graph(data, a, x, d):
     plt.figure()
-    plt.title(create_formula(a, d, min_value))
-    foooo = [data.feature["data"][length - 1], make_my_values(a, d, x)]
-    plt.plot([[0, d], foooo])
+    plt.title(create_formula(a, d))
+    x, y = [], []
+    for e in data.feature["data"]:
+        x.append(float(e))
+        y.append(float(make_my_values(a, d, e)))
+    plt.plot(x, y)
     plt.scatter(data.feature["data"], data.target["data"])
     plt.show()
 
@@ -73,9 +79,7 @@ class MyRange:
         return [self.arr_i, self.arr_nr]
 
 def hat_diffrent_weniger_abstand(diffrent, value):
-    d = (diffrent ** 2) ** (0.5)
-    m = (value) ** (0.5)
-    return (d < m)
+    return (betrag(diffrent) < betrag(value))
 
 if __name__ == '__main__':
     print("start LRD")
@@ -87,15 +91,15 @@ if __name__ == '__main__':
     min_value["value"] = calculate_distance(1, mittelwert, data)    # y = x + d
     average_increase = calculate_average_increase(data)
     max_target, max_feature = max(data.target["data"]), max(data.feature["data"])
-    step_d = max_target / average_increase / CONST.get_accuracy()
+    step_d = max_target / average_increase
     steps_a = winkel_berechnen(average_increase, data, max_feature)
-    max_increased = average_increase / CONST.get_accuracy()
+    max_increased = average_increase
     r = MyRange(-(length / 2), (length / 2), 1)
     z = r.get_data()
     k = 0
     vorzeichen = 1
     while k < length:
-        a = steps_a
+        a = steps_a[k]
         diffrent = calculate_distance(a, mittelwert, data)
         if hat_diffrent_weniger_abstand(diffrent, min_value["value"]):
             min_value_a["value"] = diffrent
@@ -108,7 +112,7 @@ if __name__ == '__main__':
     vorzeichen = 1
     while k < length:
         d = mittelwert - (((k - length) / 2) * step_d)
-        diffrent = calculate_distance(0, d, data)
+        diffrent = calculate_distance(steps_a[min_value_a["index"]], d, data)
         if hat_diffrent_weniger_abstand(diffrent, min_value["value"]):
             min_value["value"] = diffrent
             min_value["index"] = k
@@ -116,10 +120,22 @@ if __name__ == '__main__':
         k = k + 1
         if k % 10 == 0:
             vorzeichen = vorzeichen * (-1)
-    formula = create_formula(2, d)
+    formula = create_formula(steps_a[min_value_a["index"]], d)
     ppd = mittelwert - (min_value["index"] * step_d)
     px = data.feature["data"][min_value["index"]]
     pd = mittelwert - (min_value["index"] * step_d)
-    show_graph(data, min_value, steps_a[min_value_a["index"]], px, pd)
+    search = []
+    ka = 0
+    for e in data.target["data"]:
+         o = {"index": ka, "y-achsenabschnitt": e, "a": steps_a[min_value_a["index"]], "d": pd, "y-achsenabschnitt": e, "value": 0}
+         o["value"] = calculate_distance(o["a"], o["d"], data)
+         search.append(o)
+         ka = ka + 1
+    minimum, search_index = 640000, 0
+    for e in search:
+        if e["value"] < minimum:
+            minimum = e["value"]
+            search_index = e["index"]
     print(formula)
+    show_graph(data, steps_a[min_value["index"]], px, search[search_index]["y-achsenabschnitt"])
     print("end LRD")
