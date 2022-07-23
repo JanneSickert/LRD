@@ -87,13 +87,16 @@ def rotate_over_x_is_null(steps_a, steps_d, zbf):
         ka = 0
         kd = kd + 1
 
-def print_lists(*lists):
+def print_lists(xy, *lists):
     print("start LRD")
     for l in lists:
         print(str(dir(l)))
         print(str(l))
         print("\n")
         print("\n")
+    for i in range(len(xy)):
+        print("x:", xy[i], "y:", xy[i])
+    print(create_formula(a = min_value["a"], y_achsenabschnitt = min_value["y_achsenabschnitt"]))
     print("ende LRD")
 
 if __name__ == '__main__':
@@ -102,12 +105,12 @@ if __name__ == '__main__':
     a_feature = np.array(data.feature["data"])
     a_target =  np.array(data.target["data"])
     steps_a, steps_d = winkel_berechnen(), y_achse_berechnen()
-    print_lists(a_feature, a_target, steps_a, steps_d)
-    rotate_over_x_is_null(steps_a, steps_d, (length ** 2) * 2)
-    steps_d = np.multiply(steps_d, (-1))
-    print_lists(steps_d, min_value)
-    rotate_over_x_is_null(steps_a, steps_d, (length ** 2))
-    create_formula(a = min_value["index"], y_achsenabschnitt = min_value["y_achsenabschnitt"])
+    rotate_over_x_is_null(steps_a, steps_d, (length ** 2) * 4)  # +a & +d
+    steps_d = np.multiply(y_achse_berechnen(), (-1))
+    rotate_over_x_is_null(steps_a, steps_d, (length ** 2) * 3)  # +a & -d
+    steps_a = np.multiply(winkel_berechnen(), (-1))
+    rotate_over_x_is_null(steps_a, steps_d, (length ** 2) * 2)  # -a & -d
+    steps_d = y_achse_berechnen()
+    rotate_over_x_is_null(steps_a, steps_d, (length ** 2) * 1)  # -a & +d
     x , y = show_graph(data, a = min_value["a"], y_achsenabschnitt = min_value["y_achsenabschnitt"])
-    for i in range(len(x)):
-        print("x:", x[i], "y:", y[i])
+    print_lists([x, y], a_feature, a_target, steps_a, steps_d)
