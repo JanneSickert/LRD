@@ -3,7 +3,7 @@ import pandas as pd
 class LinearRegressionData:
     def __start(self, dataObj, path):
         self.feature = {"name": dataObj["feature"]}    # T3
-        self.target = {"name": dataObj["target"]}     # T4
+        self.target = {"name": dataObj["target"]}      # T4
         df = pd.read_csv(path)
         df = df.head(df.size)
         self.feature["data"] = df[dataObj["feature"]]
@@ -19,3 +19,6 @@ class LinearRegressionData:
             elif isinstance(e, str):
                 var.append(e)
         self.__start(var[0], var[1])
+    
+    def get_size(self):
+        return self.feature["data"].size
