@@ -46,12 +46,12 @@ numpy.float64</font><br>
    <font color= #00AA00 style = "font-size: 14pt">Dimension 1</font>
       <table width="570px" border = "3">
          <tr>
-            <td>x[i] - (∑ (x) / length)</td>
-            <td>y[i] - (∑ (y) / length)</td>
+            <td>x[i] - avg(x)</td>
+            <td>y[i] - avg(y))</td>
          </tr>
          <tr>
-            <td>x[i] - avg(x)</td>
-            <td>y[i] - avg(y)</td>
+            <td>[0.0]</td>
+            <td>[0.0]</td>
          </tr>
          <tr>
             <td>(x[i] - avg(x)) * (y[i] - avg(y))</td>
@@ -72,7 +72,7 @@ numpy.float64</font><br>
          </tr>
          <tr>
             <td>y = a + b * x <font color="#000">AAAAAAAAAAAA</font></td>
-            <td>b = Zähler - Nenner</td>
+            <td>b = Zähler / Nenner</td>
          </tr>
       </table>
    </div>
