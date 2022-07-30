@@ -5,52 +5,45 @@ import matplotlib.pyplot as plt
 
 CONST = Konstanten()
 
-length = 0
-matrix = None
-a_a, a_b = 0, 0
-
-def print_vars():
-    print(a_a, a_b)
-
-def create_formula():
-    formular_string = "f(x) = " + str(a_a) + " + (x * "  + str(a_b) + ")"
+def create_formula(x0, a):
+    formular_string = "f(x) = " + str(x0) + " + (x * "  + str(a) + ")"
     return formular_string
 
-def make_my_values(a, b, x):
-    return (a + b * x)
-
-def show_graph(arr_x, arr_Y, raw_x, raw_y):
-    fff = create_formula()
+def show_graph(arr_x, arr_Y, raw_x, raw_y, formel):
     plt.figure()
-    plt.title(fff)
+    plt.title(formel)
     plt.plot(arr_x, arr_Y)
     plt.scatter(raw_x, raw_y)
     plt.show()
-    return fff
 
-def foo_b(avg_x, avg_y, raw_x, raw_y):
-    a1, a2 = 0, 0
-    for i in range(0, length, 1):
-        a1 += (raw_x[i] - avg_x) * (raw_y[i] - avg_y)
-    for i in range(0, length), 1:
-        a2 += (raw_x[i] - avg_x) ** 2
-    return (a1 / a2)
+class Funktions:
+    def __init__(self):
+        self.raw_data = LinearRegressionData({"feature" : "T3", "target" : "T4"}, CONST.get_path_to_csv())
+        self.length = self.raw_data.get_size()
+        self.raw_x = np.sort(self.raw_data.feature["data"])
+        self.raw_y = np.sort(self.raw_data.target["data"])
+        self.avg_x = np.average(self.raw_x)
+        self.avg_y = np.average(self.raw_y)
 
-def start_lrs():
-    raw_data = LinearRegressionData({"feature" : "T3", "target" : "T4"}, CONST.get_path_to_csv())
-    length = raw_data.get_size()
-    raw_x = np.sort(raw_data.feature["data"])
-    raw_y = np.sort(raw_data.target["data"])
-    avg_x = np.average(raw_x)
-    avg_y = np.average(raw_y)
-    a_b = foo_b(avg_x, avg_y, raw_x, raw_y)
-    a_a = avg_y - (a_b * avg_x)
-    x = [0, raw_data.feature["data"][int(length / 2)]]
-    y = avg_x + a_b * avg_x
-    arr_x = [0,  max(raw_x)]
-    arr_y = [a_b, y]
-    math_function_as_string = show_graph(arr_x, arr_y, raw_x, raw_y)
-    return math_function_as_string
+    def fb(self, avg_x, avg_y, raw_x, raw_y):
+        a1, a2 = 0, 0
+        for i in range(0, len(raw_x), 1):
+            a1 += (raw_x[i] - avg_x) * (raw_y[i] - avg_y)
+        for i in range(0, len(raw_x), 1):
+            a2 += (raw_x[i] - avg_x) ** 2
+        return (a1 / a2)
+
+    def start_lrs(self):
+        b = self.fb(self.avg_x, self.avg_y, self.raw_x, self.raw_y)
+        a = self.avg_y - b * self.avg_x
+        x1 = 0
+        x2 = max(self.raw_x)
+        y1 = a + b * x1
+        y2 = a + b * x2
+        formel = create_formula(x1, a)
+        print(formel)
+        show_graph([x1, x2], [y1, y2], self.raw_x, self.raw_y, formel)
 
 if __name__ == "__main__":
-    start_lrs()
+    f = Funktions()
+    f.start_lrs()

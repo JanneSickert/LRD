@@ -11,5 +11,3 @@
     <img src="pics/a.PNG" alt="Bild existiert nicht mehr" width="33%" height="100px"></img>
     <img src="pics/y.PNG" alt="Bild existiert nicht mehr" width="32%" height="100px"></img>
 </div>
-<br><br>
--------------------------
